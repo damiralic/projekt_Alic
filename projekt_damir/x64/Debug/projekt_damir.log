@@ -1,0 +1,8 @@
+﻿  funkcije.c
+C:\Users\student\projekt_Alic-main\projekt_Alic-main\projekt_damir\funkcije.c(26,13): warning C4013: 'strcmp' undefined; assuming extern returning int
+C:\Users\student\projekt_Alic-main\projekt_Alic-main\projekt_damir\funkcije.c(296,26): warning C4013: 'getch' undefined; assuming extern returning int
+  main.c
+C:\Users\student\projekt_Alic-main\projekt_Alic-main\projekt_damir\funkcije.c(302,14): warning C4013: 'strcpy' undefined; assuming extern returning int
+  Generating Code...
+C:\Users\student\projekt_Alic-main\projekt_Alic-main\projekt_damir\main.c(29,24): warning C4013: 'getch' undefined; assuming extern returning int
+LINK : fatal error LNK1168: cannot open C:\Users\student\projekt_Alic-main\projekt_Alic-main\projekt_damir\x64\Debug\projekt_damir.exe for writing
