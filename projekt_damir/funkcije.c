@@ -43,10 +43,10 @@ int nova_ulaznica() {
 			printf("Unesite vrstu eventa: ");
 			scanf(" %99[^\n]", nova_ulaznica->ime_eventa);
 			printf("Unesite cijenu eventa: ");
-			scanf(" %49[^\n]", nova_ulaznica->cijena_eventa);
+			scanf("%d", &nova_ulaznica->cijena_eventa);
 			printf("Unesite broj dostupnih mjesta: ");
-			scanf(" %49[^\n]", nova_ulaznica->dostupne_ul);
-			printf("Unesite datum prikazivanja eventa: ");
+			scanf("%d", &nova_ulaznica->dostupne_ul);
+			printf("Unesite godinu prikazivanja eventa: ");
 			scanf("%d", &nova_ulaznica->godina_izdanja);
 			fileP = fopen("ulaznice.bin", "rb");
 			if (fileP == NULL) {
@@ -82,8 +82,8 @@ int nova_ulaznica() {
 
 void ispisUlaznice(ULAZNICA* ulaznice) {
 	printf("\n\nIme eventa: %s", ulaznice->ime_eventa);
-	printf("\nCijena: %s", ulaznice->cijena_eventa);
-	printf("\nBroj Dostupnih mjesta: %s", ulaznice->dostupne_ul);
+	printf("\nCijena: %d", ulaznice->cijena_eventa);
+	printf("\nBroj Dostupnih mjesta: %d", ulaznice->dostupne_ul);
 	printf("\nGodina dogadjaja: %d", ulaznice->godina_izdanja);
 
 	return;
@@ -92,8 +92,8 @@ void ispisUlaznice(ULAZNICA* ulaznice) {
 void pretrazivanje(char kriterij) {
 	ULAZNICA* ulaznice = NULL;
 	FILE* fileP = NULL;
-	char trazeni_event[100], cijena_ulaznice[50], trazena_vrsta[50];
-	int trazena_godina;
+	char trazeni_event[100];
+	int trazena_godina, cijena_ulaznice, trazena_vrsta;
 
 	int broj_ulaznica, f = 0;
 	system("cls");
@@ -139,10 +139,10 @@ void pretrazivanje(char kriterij) {
 
 			case 'a':
 				printf("Unesite cijenu trazene ulaznice: ");
-				scanf(" %49[^\n]", cijena_ulaznice);
+				scanf(" %d", &cijena_ulaznice);
 				for (int i = 0; i < broj_ulaznica; i++) {
 					fread(ulaznice, sizeof(ULAZNICA), 1, fileP);
-					if (strcmp(ulaznice->cijena_eventa, cijena_ulaznice) == 0) {
+					if (ulaznice->cijena_eventa == cijena_ulaznice) {
 						printf("\nulaznica je dostupna.");
 						ispisUlaznice(ulaznice);
 						f = 1;
@@ -152,10 +152,10 @@ void pretrazivanje(char kriterij) {
 
 			case 'v':
 				printf("Unesite broj dostupnih mjesta ulaznice: ");
-				scanf(" %49[^\n]", trazena_vrsta);
+				scanf(" %d", &trazena_vrsta);
 				for (int i = 0; i < broj_ulaznica; i++) {
 					fread(ulaznice, sizeof(ULAZNICA), 1, fileP);
-					if (strcmp(ulaznice->dostupne_ul, trazena_vrsta) == 0) {
+					if (ulaznice->dostupne_ul == trazena_vrsta) {
 						printf("\nulaznica je dostupna.");
 						ispisUlaznice(ulaznice);
 						f = 1;
@@ -305,11 +305,11 @@ void uredivanje_ulaznice() {
 							printf("Naziv uspjesno promjenjen.\n");
 							break;
 
-						case '2': // promjena redatelja
+						case '2': // promjena cijene
 							printf("\nUnesite novu cijenu: ");
-							char novi_autor[50];
-							scanf(" %49[^\n]", novi_autor);
-							strcpy((ulaznica)->cijena_eventa, novi_autor);
+							int nova_cijena;
+							scanf("%d", &nova_cijena);
+							ulaznica->cijena_eventa = nova_cijena;
 							fseek(fileP, -(int)sizeof(ULAZNICA), SEEK_CUR);
 							fwrite(ulaznica, sizeof(ULAZNICA), 1, fileP);
 							printf("\nCijena uspjesno promjenjena.\n");
@@ -317,9 +317,9 @@ void uredivanje_ulaznice() {
 
 						case '3': // promjena vrste
 							printf("\nUnesite novi broj dostupnih mjesta: ");
-							char nova_vrsta[50];
-							scanf(" %49[^\n]", nova_vrsta);
-							strcpy((ulaznica)->dostupne_ul, nova_vrsta);
+							int nova_vrsta;
+							scanf("%d", &nova_vrsta);
+							ulaznica->dostupne_ul = nova_vrsta;
 							fseek(fileP, -(int)sizeof(ULAZNICA), SEEK_CUR);
 							fwrite(ulaznica, sizeof(ULAZNICA), 1, fileP);
 							printf("\nBroj mjesta uspjesno promjenjena.\n");
@@ -410,13 +410,13 @@ void sortiranje_po_imenu_eventa_silazno(ULAZNICA* ulaznice, int broj_ulaznica) {
 		strcpy((ulaznice + i)->ime_eventa, (ulaznice + min)->ime_eventa);
 		strcpy((ulaznice + min)->ime_eventa, temp.ime_eventa);
 		//zamjena redatelja eventa
-		strcpy(temp.cijena_eventa, (ulaznice + i)->cijena_eventa);
-		strcpy((ulaznice + i)->cijena_eventa, (ulaznice + min)->cijena_eventa);
-		strcpy((ulaznice + min)->cijena_eventa, temp.cijena_eventa);
+		temp.cijena_eventa = (ulaznice + i)->cijena_eventa;
+		(ulaznice + i)->cijena_eventa = (ulaznice + min)->cijena_eventa;
+		(ulaznice + min)->cijena_eventa = temp.cijena_eventa;
 		//zamjena vrste eventa
-		strcpy(temp.dostupne_ul, (ulaznice + i)->dostupne_ul);
-		strcpy((ulaznice + i)->dostupne_ul, (ulaznice + min)->dostupne_ul);
-		strcpy((ulaznice + min)->dostupne_ul, temp.dostupne_ul);
+		temp.dostupne_ul = (ulaznice + i)->dostupne_ul;
+		(ulaznice + i)->dostupne_ul = (ulaznice + min)->dostupne_ul;
+		(ulaznice + min)->dostupne_ul = temp.dostupne_ul;
 		//zamjena godine izdanja
 		temp.godina_izdanja = (ulaznice + i)->godina_izdanja;
 		(ulaznice + i)->godina_izdanja = (ulaznice + min)->godina_izdanja;
@@ -446,13 +446,13 @@ void sortiranje_po_imenu_eventa_uzlazno(ULAZNICA* ulaznice, int broj_ulaznica) {
 		strcpy((ulaznice + i)->ime_eventa, (ulaznice + max)->ime_eventa);
 		strcpy((ulaznice + max)->ime_eventa, temp.ime_eventa);
 		//zamjena redatelja eventa
-		strcpy(temp.cijena_eventa, (ulaznice + i)->cijena_eventa);
-		strcpy((ulaznice + i)->cijena_eventa, (ulaznice + max)->cijena_eventa);
-		strcpy((ulaznice + max)->cijena_eventa, temp.cijena_eventa);
+		temp.cijena_eventa = (ulaznice + i)->cijena_eventa;
+		(ulaznice + i)->cijena_eventa = (ulaznice + max)->cijena_eventa;
+		(ulaznice + max)->cijena_eventa = temp.cijena_eventa;
 		//zamjena vrste eventa
-		strcpy(temp.dostupne_ul, (ulaznice + i)->dostupne_ul);
-		strcpy((ulaznice + i)->dostupne_ul, (ulaznice + max)->dostupne_ul);
-		strcpy((ulaznice + max)->dostupne_ul, temp.dostupne_ul);
+		temp.dostupne_ul = (ulaznice + i)->dostupne_ul;
+		(ulaznice + i)->dostupne_ul = (ulaznice + max)->dostupne_ul;
+		(ulaznice + max)->dostupne_ul = temp.dostupne_ul;
 		//zamjena godine izdanja
 		temp.godina_izdanja = (ulaznice + i)->godina_izdanja;
 		(ulaznice + i)->godina_izdanja = (ulaznice + max)->godina_izdanja;
@@ -462,55 +462,19 @@ void sortiranje_po_imenu_eventa_uzlazno(ULAZNICA* ulaznice, int broj_ulaznica) {
 	return;
 }
 
-void sortiranje_po_imenu_redatelja_silazno(ULAZNICA* ulaznice, int broj_ulaznica) {
+void sortiranje_po_cijeni_eventa_silazno(ULAZNICA* ulaznice, int broj_ulaznica) {
 	ULAZNICA temp;
-	char prvo_slovo, prvo_slovo_pom;
-	int min;
-
-	for (int i = 0; i < broj_ulaznica - 1; i++) {
-		min = i;
-		prvo_slovo = (ulaznice + i)->cijena_eventa[0] >= 'A' && (ulaznice + i)->cijena_eventa[0] <= 'Z' ? (ulaznice + i)->cijena_eventa[0] : (ulaznice + i)->cijena_eventa[0] - 32;
-		for (int j = i + 1; j < broj_ulaznica; j++) {
-			prvo_slovo_pom = (ulaznice + j)->cijena_eventa[0] >= 'A' && (ulaznice + j)->cijena_eventa[0] <= 'Z' ? (ulaznice + j)->cijena_eventa[0] : (ulaznice + j)->cijena_eventa[0] - 32;
-			if (prvo_slovo < prvo_slovo_pom) {
-				min = j;
-				prvo_slovo = (ulaznice + j)->cijena_eventa[0] >= 'A' && (ulaznice + j)->cijena_eventa[0] <= 'Z' ? (ulaznice + j)->cijena_eventa[0] : (ulaznice + j)->cijena_eventa[0] - 32;
-			}
-		}
-		//zamjena imena eventa
-		strcpy(temp.ime_eventa, (ulaznice + i)->ime_eventa);
-		strcpy((ulaznice + i)->ime_eventa, (ulaznice + min)->ime_eventa);
-		strcpy((ulaznice + min)->ime_eventa, temp.ime_eventa);
-		//zamjena redatelja eventa
-		strcpy(temp.cijena_eventa, (ulaznice + i)->cijena_eventa);
-		strcpy((ulaznice + i)->cijena_eventa, (ulaznice + min)->cijena_eventa);
-		strcpy((ulaznice + min)->cijena_eventa, temp.cijena_eventa);
-		//zamjena vrste eventa
-		strcpy(temp.dostupne_ul, (ulaznice + i)->dostupne_ul);
-		strcpy((ulaznice + i)->dostupne_ul, (ulaznice + min)->dostupne_ul);
-		strcpy((ulaznice + min)->dostupne_ul, temp.dostupne_ul);
-		//zamjena godine izdanja
-		temp.godina_izdanja = (ulaznice + i)->godina_izdanja;
-		(ulaznice + i)->godina_izdanja = (ulaznice + min)->godina_izdanja;
-		(ulaznice + min)->godina_izdanja = temp.godina_izdanja;
-	}
-
-	return;
-}
-
-void sortiranje_po_imenu_redatelja_uzlazno(ULAZNICA* ulaznice, int broj_ulaznica) {
-	ULAZNICA temp;
-	char prvo_slovo, prvo_slovo_pom;
+	int cijena1, cijena2;
 	int max;
 
 	for (int i = 0; i < broj_ulaznica - 1; i++) {
 		max = i;
-		prvo_slovo = (ulaznice + i)->cijena_eventa[0] >= 'A' && (ulaznice + i)->cijena_eventa[0] <= 'Z' ? (ulaznice + i)->cijena_eventa[0] : (ulaznice + i)->cijena_eventa[0] - 32;
+		cijena1 = (ulaznice + i)->cijena_eventa;
 		for (int j = i + 1; j < broj_ulaznica; j++) {
-			prvo_slovo_pom = (ulaznice + j)->cijena_eventa[0] >= 'A' && (ulaznice + j)->cijena_eventa[0] <= 'Z' ? (ulaznice + j)->cijena_eventa[0] : (ulaznice + j)->cijena_eventa[0] - 32;
-			if (prvo_slovo > prvo_slovo_pom) {
+			cijena2 = (ulaznice + j)->cijena_eventa;
+			if (cijena1 < cijena2) {
 				max = j;
-				prvo_slovo = (ulaznice + j)->cijena_eventa[0] >= 'A' && (ulaznice + j)->cijena_eventa[0] <= 'Z' ? (ulaznice + j)->cijena_eventa[0] : (ulaznice + j)->cijena_eventa[0] - 32;
+				cijena1 = (ulaznice + j)->cijena_eventa;
 			}
 		}
 		//zamjena imena eventa
@@ -518,17 +482,54 @@ void sortiranje_po_imenu_redatelja_uzlazno(ULAZNICA* ulaznice, int broj_ulaznica
 		strcpy((ulaznice + i)->ime_eventa, (ulaznice + max)->ime_eventa);
 		strcpy((ulaznice + max)->ime_eventa, temp.ime_eventa);
 		//zamjena redatelja eventa
-		strcpy(temp.cijena_eventa, (ulaznice + i)->cijena_eventa);
-		strcpy((ulaznice + i)->cijena_eventa, (ulaznice + max)->cijena_eventa);
-		strcpy((ulaznice + max)->cijena_eventa, temp.cijena_eventa);
+		temp.cijena_eventa = (ulaznice + i)->cijena_eventa;
+		(ulaznice + i)->cijena_eventa = (ulaznice + max)->cijena_eventa;
+		(ulaznice + max)->cijena_eventa = temp.cijena_eventa;
 		//zamjena vrste eventa
-		strcpy(temp.dostupne_ul, (ulaznice + i)->dostupne_ul);
-		strcpy((ulaznice + i)->dostupne_ul, (ulaznice + max)->dostupne_ul);
-		strcpy((ulaznice + max)->dostupne_ul, temp.dostupne_ul);
+		temp.dostupne_ul = (ulaznice + i)->dostupne_ul;
+		(ulaznice + i)->dostupne_ul = (ulaznice + max)->dostupne_ul;
+		(ulaznice + max)->dostupne_ul = temp.dostupne_ul;
 		//zamjena godine izdanja
 		temp.godina_izdanja = (ulaznice + i)->godina_izdanja;
 		(ulaznice + i)->godina_izdanja = (ulaznice + max)->godina_izdanja;
 		(ulaznice + max)->godina_izdanja = temp.godina_izdanja;
+	}
+
+	return;
+}
+
+
+void sortiranje_po_cijeni_eventa_uzlazno(ULAZNICA* ulaznice, int broj_ulaznica) {
+	ULAZNICA temp;
+	int cijena1, cijena2;
+	int min;
+
+	for (int i = 0; i < broj_ulaznica - 1; i++) {
+		min = i;
+		cijena1 = (ulaznice + i)->cijena_eventa;
+		for (int j = i + 1; j < broj_ulaznica; j++) {
+			cijena2 = (ulaznice + j)->cijena_eventa;
+			if (cijena1 > cijena2) {
+				min = j;
+				cijena1 = (ulaznice + j)->cijena_eventa;
+			}
+		}
+		//zamjena imena eventa
+		strcpy(temp.ime_eventa, (ulaznice + i)->ime_eventa);
+		strcpy((ulaznice + i)->ime_eventa, (ulaznice + min)->ime_eventa);
+		strcpy((ulaznice + min)->ime_eventa, temp.ime_eventa);
+		//zamjena cijene eventa
+		temp.cijena_eventa = (ulaznice + i)->cijena_eventa;
+		(ulaznice + i)->cijena_eventa = (ulaznice + min)->cijena_eventa;
+		(ulaznice + min)->cijena_eventa = temp.cijena_eventa;
+		//zamjena vrste eventa
+		temp.dostupne_ul = (ulaznice + i)->dostupne_ul;
+		(ulaznice + i)->dostupne_ul = (ulaznice + min)->dostupne_ul;
+		(ulaznice + min)->dostupne_ul = temp.dostupne_ul;
+		//zamjena godine izdanja
+		temp.godina_izdanja = (ulaznice + i)->godina_izdanja;
+		(ulaznice + i)->godina_izdanja = (ulaznice + min)->godina_izdanja;
+		(ulaznice + min)->godina_izdanja = temp.godina_izdanja;
 	}
 
 	return;
@@ -536,54 +537,17 @@ void sortiranje_po_imenu_redatelja_uzlazno(ULAZNICA* ulaznice, int broj_ulaznica
 
 void sortiranje_po_vrsti_eventa_silazno(ULAZNICA* ulaznice, int broj_ulaznica) {
 	ULAZNICA temp;
-	char prvo_slovo, prvo_slovo_pom;
-	int min;
-
-
-	for (int i = 0; i < broj_ulaznica - 1; i++) {
-		min = i;
-		prvo_slovo = (ulaznice + i)->dostupne_ul[0] >= 'A' && (ulaznice + i)->dostupne_ul[0] <= 'Z' ? (ulaznice + i)->dostupne_ul[0] : (ulaznice + i)->dostupne_ul[0] - 32;
-		for (int j = i + 1; j < broj_ulaznica; j++) {
-			prvo_slovo_pom = (ulaznice + j)->dostupne_ul[0] >= 'A' && (ulaznice + j)->dostupne_ul[0] <= 'Z' ? (ulaznice + j)->dostupne_ul[0] : (ulaznice + j)->dostupne_ul[0] - 32;
-			if (prvo_slovo < prvo_slovo_pom) {
-				min = j;
-				prvo_slovo = (ulaznice + j)->dostupne_ul[0] >= 'A' && (ulaznice + j)->dostupne_ul[0] <= 'Z' ? (ulaznice + j)->dostupne_ul[0] : (ulaznice + j)->dostupne_ul[0] - 32;
-			}
-		}
-		//zamjena imena eventa
-		strcpy(temp.ime_eventa, (ulaznice + i)->ime_eventa);
-		strcpy((ulaznice + i)->ime_eventa, (ulaznice + min)->ime_eventa);
-		strcpy((ulaznice + min)->ime_eventa, temp.ime_eventa);
-		//zamjena redatelja eventa
-		strcpy(temp.cijena_eventa, (ulaznice + i)->cijena_eventa);
-		strcpy((ulaznice + i)->cijena_eventa, (ulaznice + min)->cijena_eventa);
-		strcpy((ulaznice + min)->cijena_eventa, temp.cijena_eventa);
-		//zamjena vrste eventa
-		strcpy(temp.dostupne_ul, (ulaznice + i)->dostupne_ul);
-		strcpy((ulaznice + i)->dostupne_ul, (ulaznice + min)->dostupne_ul);
-		strcpy((ulaznice + min)->dostupne_ul, temp.dostupne_ul);
-		//zamjena godine izdanja
-		temp.godina_izdanja = (ulaznice + i)->godina_izdanja;
-		(ulaznice + i)->godina_izdanja = (ulaznice + min)->godina_izdanja;
-		(ulaznice + min)->godina_izdanja = temp.godina_izdanja;
-	}
-
-	return;
-}
-
-void sortiranje_po_vrsti_eventa_uzlazno(ULAZNICA* ulaznice, int broj_ulaznica) {
-	ULAZNICA temp;
-	char prvo_slovo, prvo_slovo_pom;
+	int ulaz1, ulaz2;
 	int max;
 
 	for (int i = 0; i < broj_ulaznica - 1; i++) {
 		max = i;
-		prvo_slovo = (ulaznice + i)->dostupne_ul[0] >= 'A' && (ulaznice + i)->dostupne_ul[0] <= 'Z' ? (ulaznice + i)->dostupne_ul[0] : (ulaznice + i)->dostupne_ul[0] - 32;
+		ulaz1 = (ulaznice + i)->dostupne_ul;
 		for (int j = i + 1; j < broj_ulaznica; j++) {
-			prvo_slovo_pom = (ulaznice + j)->dostupne_ul[0] >= 'A' && (ulaznice + j)->dostupne_ul[0] <= 'Z' ? (ulaznice + j)->dostupne_ul[0] : (ulaznice + j)->dostupne_ul[0] - 32;
-			if (prvo_slovo > prvo_slovo_pom) {
+			ulaz2 = (ulaznice + j)->dostupne_ul;
+			if (ulaz1 < ulaz2) {
 				max = j;
-				prvo_slovo = (ulaznice + j)->dostupne_ul[0] >= 'A' && (ulaznice + j)->dostupne_ul[0] <= 'Z' ? (ulaznice + j)->dostupne_ul[0] : (ulaznice + j)->dostupne_ul[0] - 32;
+				ulaz1 = (ulaznice + j)->dostupne_ul;
 			}
 		}
 		//zamjena imena eventa
@@ -591,17 +555,53 @@ void sortiranje_po_vrsti_eventa_uzlazno(ULAZNICA* ulaznice, int broj_ulaznica) {
 		strcpy((ulaznice + i)->ime_eventa, (ulaznice + max)->ime_eventa);
 		strcpy((ulaznice + max)->ime_eventa, temp.ime_eventa);
 		//zamjena redatelja eventa
-		strcpy(temp.cijena_eventa, (ulaznice + i)->cijena_eventa);
-		strcpy((ulaznice + i)->cijena_eventa, (ulaznice + max)->cijena_eventa);
-		strcpy((ulaznice + max)->cijena_eventa, temp.cijena_eventa);
-		//zamjena vrste eventa
-		strcpy(temp.dostupne_ul, (ulaznice + i)->dostupne_ul);
-		strcpy((ulaznice + i)->dostupne_ul, (ulaznice + max)->dostupne_ul);
-		strcpy((ulaznice + max)->dostupne_ul, temp.dostupne_ul);
+		temp.cijena_eventa = (ulaznice + i)->cijena_eventa;
+		(ulaznice + i)->cijena_eventa = (ulaznice + max)->cijena_eventa;
+		(ulaznice + max)->cijena_eventa = temp.cijena_eventa;
+		//zamjena br ulaznica eventa
+		temp.dostupne_ul = (ulaznice + i)->dostupne_ul;
+		(ulaznice + i)->dostupne_ul = (ulaznice + max)->dostupne_ul;
+		(ulaznice + max)->dostupne_ul = temp.dostupne_ul;
 		//zamjena godine izdanja
 		temp.godina_izdanja = (ulaznice + i)->godina_izdanja;
 		(ulaznice + i)->godina_izdanja = (ulaznice + max)->godina_izdanja;
 		(ulaznice + max)->godina_izdanja = temp.godina_izdanja;
+	}
+
+	return;
+}
+
+void sortiranje_po_vrsti_eventa_uzlazno(ULAZNICA* ulaznice, int broj_ulaznica) {
+	ULAZNICA temp;
+	int ulaz1, ulaz2;
+	int min;
+
+	for (int i = 0; i < broj_ulaznica - 1; i++) {
+		min = i;
+		ulaz1 = (ulaznice + i)->dostupne_ul;
+		for (int j = i + 1; j < broj_ulaznica; j++) {
+			ulaz2 = (ulaznice + j)->dostupne_ul;
+			if (ulaz1 > ulaz2) {
+				min = j;
+				ulaz1 = (ulaznice + j)->dostupne_ul;
+			}
+		}
+		//zamjena imena eventa
+		strcpy(temp.ime_eventa, (ulaznice + i)->ime_eventa);
+		strcpy((ulaznice + i)->ime_eventa, (ulaznice + min)->ime_eventa);
+		strcpy((ulaznice + min)->ime_eventa, temp.ime_eventa);
+		//zamjena cijene eventa
+		temp.cijena_eventa = (ulaznice + i)->cijena_eventa;
+		(ulaznice + i)->cijena_eventa = (ulaznice + min)->cijena_eventa;
+		(ulaznice + min)->cijena_eventa = temp.cijena_eventa;
+		//zamjena br dostupnih ulaznica eventa
+		temp.dostupne_ul = (ulaznice + i)->dostupne_ul;
+		(ulaznice + i)->dostupne_ul = (ulaznice + min)->dostupne_ul;
+		(ulaznice + min)->dostupne_ul = temp.dostupne_ul;
+		//zamjena godine izdanja
+		temp.godina_izdanja = (ulaznice + i)->godina_izdanja;
+		(ulaznice + i)->godina_izdanja = (ulaznice + min)->godina_izdanja;
+		(ulaznice + min)->godina_izdanja = temp.godina_izdanja;
 	}
 
 	return;
@@ -627,13 +627,13 @@ void sortiranje_po_godini_uzlazno(ULAZNICA* ulaznice, int broj_ulaznica) {
 		strcpy((ulaznice + i)->ime_eventa, (ulaznice + min)->ime_eventa);
 		strcpy((ulaznice + min)->ime_eventa, temp.ime_eventa);
 		//zamjena redatelja eventa
-		strcpy(temp.cijena_eventa, (ulaznice + i)->cijena_eventa);
-		strcpy((ulaznice + i)->cijena_eventa, (ulaznice + min)->cijena_eventa);
-		strcpy((ulaznice + min)->cijena_eventa, temp.cijena_eventa);
+		temp.cijena_eventa = (ulaznice + i)->cijena_eventa;
+		(ulaznice + i)->cijena_eventa = (ulaznice + min)->cijena_eventa;
+		(ulaznice + min)->cijena_eventa = temp.cijena_eventa;
 		//zamjena vrste eventa
-		strcpy(temp.dostupne_ul, (ulaznice + i)->dostupne_ul);
-		strcpy((ulaznice + i)->dostupne_ul, (ulaznice + min)->dostupne_ul);
-		strcpy((ulaznice + min)->dostupne_ul, temp.dostupne_ul);
+		temp.dostupne_ul = (ulaznice + i)->dostupne_ul;
+		(ulaznice + i)->dostupne_ul = (ulaznice + min)->dostupne_ul;
+		(ulaznice + min)->dostupne_ul = temp.dostupne_ul;
 		//zamjena godine izdanja
 		temp.godina_izdanja = (ulaznice + i)->godina_izdanja;
 		(ulaznice + i)->godina_izdanja = (ulaznice + min)->godina_izdanja;
@@ -662,14 +662,14 @@ void sortiranje_po_godini_silazno(ULAZNICA* ulaznice, int broj_ulaznica) {
 		strcpy(temp.ime_eventa, (ulaznice + i)->ime_eventa);
 		strcpy((ulaznice + i)->ime_eventa, (ulaznice + max)->ime_eventa);
 		strcpy((ulaznice + max)->ime_eventa, temp.ime_eventa);
-		//zamjena redatelja eventa
-		strcpy(temp.cijena_eventa, (ulaznice + i)->cijena_eventa);
-		strcpy((ulaznice + i)->cijena_eventa, (ulaznice + max)->cijena_eventa);
-		strcpy((ulaznice + max)->cijena_eventa, temp.cijena_eventa);
+		//zamjena cijene eventa
+		temp.cijena_eventa = (ulaznice + i)->cijena_eventa;
+		(ulaznice + i)->cijena_eventa = (ulaznice + max)->cijena_eventa;
+		(ulaznice + max)->cijena_eventa = temp.cijena_eventa;
 		//zamjena vrste eventa
-		strcpy(temp.dostupne_ul, (ulaznice + i)->dostupne_ul);
-		strcpy((ulaznice + i)->dostupne_ul, (ulaznice + max)->dostupne_ul);
-		strcpy((ulaznice + max)->dostupne_ul, temp.dostupne_ul);
+		temp.dostupne_ul = (ulaznice + i)->dostupne_ul;
+		(ulaznice + i)->dostupne_ul = (ulaznice + max)->dostupne_ul;
+		(ulaznice + max)->dostupne_ul = temp.dostupne_ul;
 		//zamjena godine izdanja
 		temp.godina_izdanja = (ulaznice + i)->godina_izdanja;
 		(ulaznice + i)->godina_izdanja = (ulaznice + max)->godina_izdanja;
@@ -683,7 +683,7 @@ void sortiranje_izbornik() {
 	ULAZNICA* ulaznice = NULL;
 	FILE* fileP = NULL;
 	char prvi_odabir, drugi_odabir;
-	char odabir[30];
+	//char odabir[30];
 
 	int broj_ulaznica;
 	system("cls");
@@ -723,10 +723,10 @@ void sortiranje_izbornik() {
 				break;
 			case '2':
 				if (drugi_odabir == '1') {
-					sortiranje_po_imenu_redatelja_uzlazno(ulaznice, broj_ulaznica);
+					sortiranje_po_cijeni_eventa_uzlazno(ulaznice, broj_ulaznica);
 				}
 				else {
-					sortiranje_po_imenu_redatelja_silazno(ulaznice, broj_ulaznica);
+					sortiranje_po_cijeni_eventa_silazno(ulaznice, broj_ulaznica);
 				}
 				break;
 			case '3':

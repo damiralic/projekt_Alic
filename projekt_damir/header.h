@@ -3,19 +3,11 @@
 
 typedef struct ulaznica {
 	char ime_eventa[100];
-	char cijena_eventa[50];
+	int cijena_eventa;
 	int godina_izdanja;
-	char dostupne_ul[50];
+	int dostupne_ul;
 }ULAZNICA;
-
-/*
-typedef struct ulaznica {
-	char ime_eventa[100];
-	char cijena_eventa[50];
-	int godina_izdanja;
-	char dostupne_ul[50];
-}ULAZNICA;
-*/
+//ostalo popravit sortiranje nista ne radi osim godine eventa
 
 int nova_ulaznica();
 
@@ -31,13 +23,13 @@ void sortiranje_po_imenu_eventa_silazno(ULAZNICA*, int);
 
 void sortiranje_po_imenu_eventa_uzlazno(ULAZNICA*, int);
 
-void sortiranje_po_imenu_redatelja_silazno(ULAZNICA*, int);
+void sortiranje_po_cijeni_eventa_silazno(ULAZNICA*, int);
 
-void sortiranje_po_imenu_redatelja_uzlazno(ULAZNICA*, int);
+void sortiranje_po_cijeni_eventa_uzlazno(ULAZNICA*, int);
 
-void sortiranje_po_vrsti_djela_silazno(ULAZNICA*, int);
+void sortiranje_po_vrsti_eventa_silazno(ULAZNICA*, int);
 
-void sortiranje_po_vrsti_djela_uzlazno(ULAZNICA*, int);
+void sortiranje_po_vrsti_eventa_uzlazno(ULAZNICA*, int);
 
 void sortiranje_po_godini_silazno(ULAZNICA*, int);
 
