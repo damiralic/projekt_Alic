@@ -1,0 +1,7 @@
+﻿  funkcije.c
+C:\Users\student\Downloads\projekt_Alic-main\projekt_Alic-main\projekt_Alic-main\projekt_damir\funkcije.c(26,13): warning C4013: 'strcmp' undefined; assuming extern returning int
+C:\Users\student\Downloads\projekt_Alic-main\projekt_Alic-main\projekt_Alic-main\projekt_damir\funkcije.c(114,12): warning C4566: character represented by universal-character-name '\u0111' cannot be represented in the current code page (1252)
+C:\Users\student\Downloads\projekt_Alic-main\projekt_Alic-main\projekt_Alic-main\projekt_damir\funkcije.c(128,12): warning C4566: character represented by universal-character-name '\u0111' cannot be represented in the current code page (1252)
+C:\Users\student\Downloads\projekt_Alic-main\projekt_Alic-main\projekt_Alic-main\projekt_damir\funkcije.c(296,26): warning C4013: 'getch' undefined; assuming extern returning int
+C:\Users\student\Downloads\projekt_Alic-main\projekt_Alic-main\projekt_Alic-main\projekt_damir\funkcije.c(302,14): warning C4013: 'strcpy' undefined; assuming extern returning int
+LINK : fatal error LNK1168: cannot open C:\Users\student\Downloads\projekt_Alic-main\projekt_Alic-main\projekt_Alic-main\projekt_damir\x64\Debug\projekt_damir.exe for writing
